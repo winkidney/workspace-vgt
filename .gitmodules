@@ -1,0 +1,3 @@
+[submodule "data/tools/dotfile"]
+	path = data/tools/dotfile
+	url = git@github.com:winkidney/dotfile.git
