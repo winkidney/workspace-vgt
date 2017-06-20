@@ -1,3 +1,14 @@
 # localfiles
 data/workspace
 *~
+
+# vagrant files
+.vagrant
+
+# logfiles
+*.log
+
+# vagrant box file
+
+*.box
+
