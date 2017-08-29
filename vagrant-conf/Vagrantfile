@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
   # config about ssh username and password
   # config.ssh.username = "winkidney"
   # config.ssh.password = "111111"
-  # config.ssh.keys_only = false  
+  # config.ssh.keys_only = false
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -48,7 +48,7 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder "../data", "/home/ubuntu/data"
+  config.vm.synced_folder "../data", "/home/ubuntu/workspace"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -56,7 +56,7 @@ Vagrant.configure("2") do |config|
   #
   config.vm.provider "virtualbox" do |vb|
      vb.gui = false
-     vb.memory = "2048"
+     vb.memory = "4096"
   end
   #
   # View the documentation for the provider you are using for more
@@ -71,18 +71,22 @@ Vagrant.configure("2") do |config|
   
   # Copy files to vagrant as the default file
   config.vm.provision "file", source: "./conf/pip.conf", destination: "/tmp/pip.conf"
-  
+  config.vm.provision "file", source: "./conf/install_oh_my_zsh.sh", destination: "/tmp/install_oh_my_zsh.sh"
 
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
+    # change sources as ustc
     sudo sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+    # python pip
     sudo cp /tmp/pip.conf /etc/pip.conf
     apt-get update
     apt-get install -y python-pip tmux zsh wget
     # install oh-my-zsh
-    sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
-    cd ~/data/tools/dotfile&& sudo pip install -r requirements.txt && ./install.py
+    chmod a+x /tmp/install_oh_my_zsh.sh
+    /tmp/install_oh_my_zsh.sh /home/ubuntu/workspace
+    # install oh-my-zsh for user "ubuntu"
+    sudo -i -u ubuntu /tmp/install_oh_my_zsh.sh /home/ubuntu/workspace
   SHELL
 end

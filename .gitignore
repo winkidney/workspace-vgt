@@ -1,9 +1,16 @@
+# Mr.Project
+.idea
+
 # localfiles
 data/workspace
 *~
+.DS_Store
 
 # vagrant files
 .vagrant
+
+# local-data folder
+data
 
 # logfiles
 *.log
