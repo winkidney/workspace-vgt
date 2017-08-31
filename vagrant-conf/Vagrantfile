@@ -39,6 +39,7 @@ Vagrant.configure("2") do |config|
   # using a specific IP.
   config.vm.network "private_network", ip: "192.168.33.10"
 
+
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
   # your network.
@@ -70,8 +71,7 @@ Vagrant.configure("2") do |config|
   # end
   
   # Copy files to vagrant as the default file
-  config.vm.provision "file", source: "./conf/pip.conf", destination: "/tmp/pip.conf"
-  config.vm.provision "file", source: "./conf/install_oh_my_zsh.sh", destination: "/tmp/install_oh_my_zsh.sh"
+  config.vm.provision "file", source: "./conf", destination: "/tmp/conf"
 
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
@@ -79,14 +79,23 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     # change sources as ustc
     sudo sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+
     # python pip
-    sudo cp /tmp/pip.conf /etc/pip.conf
+    sudo cp -fr /tmp/conf/pip.conf /etc/pip.conf
+
+    # dotfile
+    sudo cp -rf /tmp/conf/dotfile /home/ubuntu/workspace/dotfile
+    sudo ln -s /tmp/conf/dotfile /root/dotfile
+
+    # packages
     apt-get update
     apt-get install -y python-pip tmux zsh wget
+
     # install oh-my-zsh
-    chmod a+x /tmp/install_oh_my_zsh.sh
-    /tmp/install_oh_my_zsh.sh /home/ubuntu/workspace
+    chmod a+x /tmp/conf/install_oh_my_zsh.sh
+    /tmp/conf/install_oh_my_zsh.sh /home/ubuntu/workspace/dotfile
+
     # install oh-my-zsh for user "ubuntu"
-    sudo -i -u ubuntu /tmp/install_oh_my_zsh.sh /home/ubuntu/workspace
+    sudo -i -u ubuntu /tmp/conf/install_oh_my_zsh.sh /root/dotfile
   SHELL
 end
